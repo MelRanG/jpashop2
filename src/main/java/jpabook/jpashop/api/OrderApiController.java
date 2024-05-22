@@ -1,14 +1,20 @@
 package jpabook.jpashop.api;
 
+import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItem;
+import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.domain.repository.OrderRepository;
 import jpabook.jpashop.domain.repository.OrderSearch;
+import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,9 +26,9 @@ public class OrderApiController {
     public List<Order> ordersV1(){
         List<Order> all = orderRepository.findAllByString(new OrderSearch());
         for (Order order : all) {
+            //아래처럼 강제 초기화를 한 이유는 Hibernate5Moduel은 Lazy로딩인 경우 출력을 안한다. 출력하기 위해서 초기화
             order.getMember().getName();
             order.getDelivery().getAddress();
-            //아래처럼 강제 초기화를 한 이유는 Hibernate5Moduel은 Lazy로딩인 경우 출력을 안한다. 출력하기 위해서 초기화
             List<OrderItem> orderItems = order.getOrderItems();
 //            for (OrderItem orderItem : orderItems) {
 //                orderItem.getItem().getName();
@@ -30,5 +36,47 @@ public class OrderApiController {
             orderItems.forEach(o -> o.getItem().getName());
         }
         return all;
+    }
+
+    @GetMapping("/api/v2/orders")
+    public List<OrderDto> ordersV2(){
+        List<Order> orders = orderRepository.findAllByString(new OrderSearch());
+        return orders.stream()
+                .map(o -> new OrderDto(o))
+                .collect(Collectors.toList());
+    }
+    @Data
+    static class OrderDto{
+        private Long orderId;
+        private String name;
+        private LocalDateTime orderDate;
+        private OrderStatus orderStatus;
+        private Address address;
+//        private List<OrderItem> orderItems; //DTO 안에 엔티티가 노출되면 안된다. 엔티티는 아예 안보여야함
+        private List<OrderItemDto> orderItems; //DTO 안에 엔티티가 노출되면 안된다. 엔티티는 아예 안보여야함
+        public OrderDto(Order o){
+            orderId = o.getId();
+            name = o.getMember().getName();
+            orderDate = o.getOrderDate();
+            orderStatus = o.getStatus();
+            address = o.getDelivery().getAddress();
+            orderItems = o.getOrderItems().stream()
+                    .map(orderItem -> new OrderItemDto(orderItem))
+                    .collect(Collectors.toList());
+        }
+
+    }
+//클라이언트가 필요한 데이터만 추출
+    @Getter
+    static class OrderItemDto{
+        private String itemName;
+        private int orderPrice;
+        private int count;
+
+        public OrderItemDto(OrderItem orderItem) {
+            this.itemName = orderItem.getItem().getName();
+            this.orderPrice = orderItem.getOrderPrice();
+            this.count = orderItem.getCount();
+        }
     }
 }
