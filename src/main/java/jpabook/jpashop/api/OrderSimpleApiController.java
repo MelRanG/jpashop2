@@ -6,6 +6,7 @@ import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.domain.repository.OrderRepository;
 import jpabook.jpashop.domain.repository.OrderSearch;
 import jpabook.jpashop.domain.repository.order.simplequery.OrderSimpleQueryDto;
+import jpabook.jpashop.domain.repository.order.simplequery.OrderSimpleQueryRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderSimpleApiController {
     private final OrderRepository orderRepository;
+    private final OrderSimpleQueryRepository orderSimpleQueryRepository;
 
     //원래는 결과값에 result를 감싸야함
     @GetMapping("/api/v2/simple-orders")
@@ -45,7 +47,7 @@ public class OrderSimpleApiController {
     }
     @GetMapping("/api/v4/simple-orders")
     public List<OrderSimpleQueryDto> ordersV4(){
-        return orderRepository.findOrderDtos();
+        return orderSimpleQueryRepository.findOrderDtos();
     }
 
     @Data
