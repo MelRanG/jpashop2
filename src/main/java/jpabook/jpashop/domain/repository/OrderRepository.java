@@ -112,8 +112,9 @@ public class OrderRepository {
 
     public List<Order> findAllWithItem() {
         //Order가 2개고 OrderItems가 2개인 경우 order를 조회하려고 쿼리를 수행했는데 orderItem때문에 4개가 나온다.
+        //1개 데이터와 2개 데이터를 조인하면 결과 값은 2개가 된다. -> 데이터 뻥튀기
         return em.createQuery(
-                "select o from Order o" +
+                "select distinct o from Order o" +
                         " join fetch o.member m" +
                         " join fetch o.delivery d" +
                         " join fetch o.orderItems oi" +
