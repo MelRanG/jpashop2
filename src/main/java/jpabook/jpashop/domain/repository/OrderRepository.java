@@ -111,7 +111,15 @@ public class OrderRepository {
     }
 
     public List<Order> findAllWithItem() {
-        return null;
+        //Order가 2개고 OrderItems가 2개인 경우 order를 조회하려고 쿼리를 수행했는데 orderItem때문에 4개가 나온다.
+        return em.createQuery(
+                "select o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d" +
+                        " join fetch o.orderItems oi" +
+                        " join fetch oi.item i", Order.class)
+                .getResultList();
+
     }
 
     public List<Order> findAllWithMemberDelivery(int offset, int limit) {
