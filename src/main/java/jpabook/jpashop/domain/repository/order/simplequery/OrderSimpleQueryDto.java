@@ -6,6 +6,8 @@ import jpabook.jpashop.domain.OrderStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 @Data
 public class OrderSimpleQueryDto {
 
@@ -14,6 +16,7 @@ public class OrderSimpleQueryDto {
     private LocalDateTime orderDate;
     private OrderStatus orderStatus;
     private Address address;
+    private List<OrderItemQueryDto> orderItems;
 
     public OrderSimpleQueryDto(long orderId, String name, LocalDateTime orderDate, OrderStatus orderStatus, Address address) {
         this.orderId = orderId;
