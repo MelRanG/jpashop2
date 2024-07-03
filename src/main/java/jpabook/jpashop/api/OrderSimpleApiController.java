@@ -5,6 +5,8 @@ import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.domain.repository.OrderRepository;
 import jpabook.jpashop.domain.repository.OrderSearch;
+import jpabook.jpashop.domain.repository.order.query.OrderQueryDto;
+import jpabook.jpashop.domain.repository.order.query.OrderQueryRepository;
 import jpabook.jpashop.domain.repository.order.simplequery.OrderSimpleQueryDto;
 import jpabook.jpashop.domain.repository.order.simplequery.OrderSimpleQueryRepository;
 import lombok.Data;
@@ -49,6 +51,8 @@ public class OrderSimpleApiController {
     public List<OrderSimpleQueryDto> ordersV4(){
         return orderSimpleQueryRepository.findOrderDtos();
     }
+
+
 
     @Data
     static class SimpleOrderDto{
